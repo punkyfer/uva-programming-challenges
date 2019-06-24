@@ -1,94 +1,103 @@
-def erastotenes_sieve(n):
-
- 	natural_nums = [x for x in range(2, n+1)]
- 	selected_nums = {natural_nums[x]:False for x in range(len(natural_nums))}
-
- 	for i in range(2, int(n**0.5)):
- 		if selected_nums[i]==False:
- 			for j in range(i, int(n/i)):
- 				selected_nums[i*j]=True
- 	return [k for k,x in selected_nums.items() if x==False]
-
-def find_next_prime(n):
-	x, y = n, 2*n
-	for p in range(x, y):
-		for i in range(2, p):
-			if p % i == 0:
-				break
-		else:
-			return p
-	return None 
-
-def find_4_primes(n):
-	if n/4>max_primes:
-		prime_div_4 = find_next_prime(int(n/4))
-		ctr = 1
-		primes_to_sum = []
-		while prime_div_4 > int(n/4):
-			prime_div_4 = find_next_prime(int(n/4)-ctr)
-			ctr += 1
-		primes_to_sum.append(prime_div_4)
-		total_sum = n - primes_to_sum[-1]
-		if (total_sum-primes[0])%2 == 0:
-			primes_to_sum.append(primes[0])
-			total_sum -= primes[0]
-		elif (total_sum-primes[1])%2 == 0:
-			primes_to_sum.append(primes[1])
-			total_sum -= primes[1]
-		for x in range(len(primes)-1, -1, -1):
-			next_prime = find_next_prime(total_sum-primes[x])
-			if primes[x] + next_prime == total_sum:
-				primes_to_sum += [primes[x], next_prime]
-				return primes_to_sum
-		return None
-	else:	
-		primes_div_4 = [2]
-		primes_div_4 += [x for x in primes if x < n/4]
-		if primes_div_4[-1] * 4 == n:
-			return [primes_div_4[-1], primes_div_4[-1], primes_div_4[-1], primes_div_4[-1]]
-		primes_to_sum = [primes_div_4[-1]]
-		total_sum = n - primes_to_sum[-1]
-		if (total_sum-primes[0]) % 2 == 0:
-			primes_to_sum.append(primes[0])
-			total_sum -= primes[0]
-		elif (total_sum-primes[1]) % 2 == 0:
-			primes_to_sum.append(primes[1])
-			total_sum -= primes[1]
-
-		for x in primes:
-			for y in primes:
-				if x + y == total_sum:
-					primes_to_sum += [x,y]
-					return primes_to_sum
-		return None
-
-
-
-
-
+import math
 
 def read_input():
-	numbers = []
-	try:
-		while (True):
-			number = int(input().strip())
-			numbers.append(number)
-	except EOFError:
-		pass
-	return numbers
+  cases = []
+  try:
+    while (True):
+      numbers = [int(x) for x in input().strip().split()]
+      cases.append(numbers)
+  except EOFError:
+    pass
+  return cases
 
-max_primes = 1000000 
+def get_powers(n, p):
+  res = 0
+  power = p
+  while (power <= n):
+    res += n/power
+    power *= p
+
+  return res
+
+def sieve(n):
+  spf[1] = 1
+  for i in range(2, n):
+    spf[i] = i
+
+  for i in range(4, n, 2):
+    spf[i] = 2
+
+  for i in range(3, math.ceil(math.sqrt(n))):
+    if spf[i] == i:
+      for j in range(i * i, n, i):
+        if spf[j] == j:
+          spf[j] = i
+
+
+def getFactors(n):
+  #ret = []
+  dic = {}
+  x = n
+  while (x != 1):
+    try:
+      dic[spf[x]] += 1
+    except:
+      dic[spf[x]] = 1
+    #ret += [spf[x]]
+    x = x // spf[x]
+
+  return dic
+
+def primeFactors(x):
+  n = x
+  ret = {}
+  while n%2 == 0:
+    try:
+      ret[2] += 1
+    except:
+      ret[2] = 1
+    n = n / 2
+
+  for i in range(3, int(math.sqrt(n))+1, 2):
+    while n % i == 0:
+      try:
+        ret[i] += 1
+      except:
+        ret[i] = 1
+      n = n / i
+
+  if n > 2:
+    try:
+      ret[n] += 1
+    except:
+      ret[n] = 1
+
+  return ret
+
+#mn = 2147483648
+#mn = 50000
 numbers = read_input()
-primes = erastotenes_sieve(max_primes)
+#spf = [0 for i in range(mn)] 
+#sieve(mn)
 
-
-for number in numbers:
-	if number<8:
-		print ("Impossible.")
-	else:
-		prime_sum = find_4_primes(number)
-		if prime_sum != None:
-			print ("{} {} {} {}".format(prime_sum[0], prime_sum[1], prime_sum[2], prime_sum[3]))
-		else:
-			print ("Impossible.")
-
+for (n, m) in numbers:
+  #if m>math.factorial(n): div = False
+  if m==0: div = True
+  elif n==0 and m==1: div = True 
+  else:
+    """
+    if m <= mn:
+      factors = getFactors(m)
+    else:
+      factors = primeFactors(m)
+    """
+    factors = primeFactors(m)
+    div = True
+    for factor in factors:
+      if get_powers(n, factor) < factors[factor]:
+        div = False
+        break
+  if div:
+    print ("{} divides {}!".format(m, n))
+  else:
+    print ("{} does not divide {}!".format(m, n))

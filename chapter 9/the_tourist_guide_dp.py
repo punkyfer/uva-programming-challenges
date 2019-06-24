@@ -37,9 +37,6 @@ def tourist_dp(graph):
 
 puzzles = read_input()
 
-print (puzzles[0])
-
-"""
 for c,puzzle_arr in enumerate(puzzles):
   puzzle = puzzle_arr[0]
   start_city, end_city = puzzle_arr[1], puzzle_arr[2]
@@ -51,4 +48,3 @@ for c,puzzle_arr in enumerate(puzzles):
   min_trips = math.ceil(num_tourists/(min_cost-1))
   print ("Minimum Number of Trips = {}".format(str(min_trips)))
   print ()
-"""
