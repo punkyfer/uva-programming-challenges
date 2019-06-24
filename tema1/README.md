@@ -1,4 +1,4 @@
-**Chapter 1** - Getting Started
+### Chapter 1 - Getting Started
 
 (The problems are listed using the format "UVA id - Name")
 
